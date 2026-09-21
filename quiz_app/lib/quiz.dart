@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:quiz_app/questions.dart';
 import 'package:quiz_app/start_screen.dart';
 import 'package:quiz_app/questions_screen.dart';
+import 'package:quiz_app/results_screen.dart';
 
 class Quiz extends StatefulWidget {
   const Quiz({super.key});
@@ -10,7 +11,8 @@ class Quiz extends StatefulWidget {
 }
 
 class _QuizState extends State<Quiz> {
-  List<String> selectedAnswers = [];
+  List<String> selectedAnswers = List.filled(questions.length, '');
+  var currentQuestionIndex = 0;
   var activeScreen = 'start-screen';
 
   void switchScreen() {
@@ -20,10 +22,30 @@ class _QuizState extends State<Quiz> {
   }
 
   void chooseAnswer(String answer) {
-    selectedAnswers.add(answer);
-    if (selectedAnswers.length == questions.length) {
-      // We'll add the results screen next
+    setState(() {
+      selectedAnswers[currentQuestionIndex] = answer;
+      if (currentQuestionIndex < questions.length - 1) {
+        currentQuestionIndex++;
+      } else {
+        activeScreen = 'results-screen';
+      }
+    });
+  }
+
+  void goToPreviousQuestion() {
+    if (currentQuestionIndex > 0) {
+      setState(() {
+        currentQuestionIndex--;
+      });
     }
+  }
+
+  void restartQuiz() {
+    setState(() {
+      selectedAnswers = List.filled(questions.length, '');
+      currentQuestionIndex = 0;
+      activeScreen = 'questions-screen';
+    });
   }
 
   @override
@@ -31,14 +53,26 @@ class _QuizState extends State<Quiz> {
     Widget screenWidget = StartScreen(switchScreen);
 
     if (activeScreen == 'questions-screen') {
-      screenWidget = QuestionsScreen(onSelectAnswer: chooseAnswer);
+      screenWidget = QuestionsScreen(
+        currentQuestionIndex: currentQuestionIndex,
+        currentAnswer: selectedAnswers[currentQuestionIndex],
+        onSelectAnswer: chooseAnswer,
+        onGoBack: currentQuestionIndex > 0 ? goToPreviousQuestion : null,
+      );
+    }
+
+    if (activeScreen == 'results-screen') {
+      screenWidget = ResultsScreen(
+        chosenAnswers: selectedAnswers,
+        onRestart: restartQuiz,
+      );
     }
 
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color.fromARGB(255, 41, 250, 86), Color.fromARGB(255, 30, 10, 90)],
+            colors: [Color.fromARGB(255, 255, 94, 77), Color.fromARGB(255, 70, 20, 90)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),

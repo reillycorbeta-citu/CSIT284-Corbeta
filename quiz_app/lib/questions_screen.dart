@@ -2,23 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:quiz_app/questions.dart';
 import 'package:quiz_app/answer_button.dart';
 
-class QuestionsScreen extends StatefulWidget {
-  const QuestionsScreen({super.key, required this.onSelectAnswer});
+class QuestionsScreen extends StatelessWidget {
+  const QuestionsScreen({
+    super.key,
+    required this.currentQuestionIndex,
+    required this.currentAnswer,
+    required this.onSelectAnswer,
+    required this.onGoBack,
+  });
+
+  final int currentQuestionIndex;
+  final String currentAnswer;
   final void Function(String answer) onSelectAnswer;
-
-  @override
-  State<QuestionsScreen> createState() => _QuestionsScreenState();
-}
-
-class _QuestionsScreenState extends State<QuestionsScreen> {
-  var currentQuestionIndex = 0;
-
-  void answerQuestion(String selectedAnswer) {
-    widget.onSelectAnswer(selectedAnswer);
-    setState(() {
-      currentQuestionIndex++;
-    });
-  }
+  final void Function()? onGoBack;
 
   @override
   Widget build(BuildContext context) {
@@ -39,11 +35,24 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
               textAlign: TextAlign.center),
           const SizedBox(height: 30),
           ...currentQuestion.getShuffledAnswers().map((answer) {
+            final isSelected = answer == currentAnswer;
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
-              child: AnswerButton(answerText: answer, onTap: () => answerQuestion(answer)),
+              child: AnswerButton(
+                answerText: answer,
+                isSelected: isSelected,
+                onTap: () => onSelectAnswer(answer),
+              ),
             );
           }),
+          const SizedBox(height: 10),
+          if (onGoBack != null)
+            TextButton.icon(
+              onPressed: onGoBack,
+              style: TextButton.styleFrom(foregroundColor: Colors.white),
+              icon: const Icon(Icons.arrow_back),
+              label: const Text('Back'),
+            ),
         ],
       ),
     );
