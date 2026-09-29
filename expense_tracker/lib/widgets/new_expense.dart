@@ -1,4 +1,4 @@
-import 'dart:io' show Platform;
+
 
 import 'package:expense_tracker/models/expense.dart';
 import 'package:flutter/cupertino.dart';
@@ -36,7 +36,7 @@ class _NewExpenseState extends State<NewExpense> {
   }
 
   void _showDialog(String message) {
-    if (Platform.isIOS) {
+          if (Theme.of(context).platform == TargetPlatform.iOS) {
       showCupertinoDialog(
         context: context,
         builder: (ctx) => CupertinoAlertDialog(
