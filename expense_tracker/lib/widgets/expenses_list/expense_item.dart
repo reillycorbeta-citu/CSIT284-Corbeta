@@ -58,7 +58,7 @@ class ExpenseItem extends StatelessWidget {
               ),
             ),
             Text(
-              '\$${expense.amount.toStringAsFixed(2)}',
+              '₱${expense.amount.toStringAsFixed(2)}',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
