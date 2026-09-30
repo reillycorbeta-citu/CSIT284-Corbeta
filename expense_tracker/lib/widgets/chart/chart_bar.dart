@@ -11,25 +11,33 @@ class ChartBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+    final safeFill = fill.isNaN ? 0.0 : fill.clamp(0.0, 1.0);
+
+    final barColor = (isDarkMode
+            ? theme.colorScheme.secondary
+            : theme.colorScheme.primary)
+        .withOpacity(0.65);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: Tooltip(
-        message: '${(fill * 100).toStringAsFixed(0)}%',
-        child: FractionallySizedBox(
-          heightFactor: fill,
-          alignment: Alignment.bottomCenter,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              // Reusable styling: same rounded-top shape everywhere.
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(8),
-                topRight: Radius.circular(8),
+        message: '${(safeFill * 100).toStringAsFixed(0)}%',
+        // Animation: bars grow from 0 and smoothly resize when data changes.
+        child: TweenAnimationBuilder<double>(
+          tween: Tween(begin: 0, end: safeFill),
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeOutCubic,
+          builder: (context, value, _) => FractionallySizedBox(
+            heightFactor: value,
+            alignment: Alignment.bottomCenter,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(8)),
+                color: barColor,
               ),
-              color: isDarkMode
-                  ? Theme.of(context).colorScheme.secondary.withOpacity(0.65)
-                  : Theme.of(context).colorScheme.primary.withOpacity(0.65),
             ),
           ),
         ),
