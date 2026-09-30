@@ -14,22 +14,22 @@ class Expenses extends StatefulWidget {
 class _ExpensesState extends State<Expenses> {
   final List<Expense> _registeredExpenses = [
     Expense(
-      title: 'Flutter Course',
-      amount: 19.99,
-      date: DateTime.now().subtract(const Duration(days: 12)),
-      category: Category.work,
+      title: 'Groceries',
+      amount: 1250,
+      date: DateTime.now().subtract(const Duration(days: 2)),
+      category: Category.food,
     ),
     Expense(
       title: 'Cinema Night',
-      amount: 12.50,
+      amount: 350,
       date: DateTime.now().subtract(const Duration(days: 5)),
       category: Category.leisure,
     ),
     Expense(
-      title: 'Groceries',
-      amount: 45.30,
-      date: DateTime.now().subtract(const Duration(days: 2)),
-      category: Category.food,
+      title: 'Flutter Course',
+      amount: 999,
+      date: DateTime.now().subtract(const Duration(days: 12)),
+      category: Category.work,
     ),
   ];
 
@@ -44,7 +44,9 @@ class _ExpensesState extends State<Expenses> {
 
   void _addExpense(Expense expense) {
     setState(() {
-      _registeredExpenses.add(expense);
+      _registeredExpenses
+        ..add(expense)
+        ..sort((a, b) => b.date.compareTo(a.date));
     });
   }
 
@@ -54,8 +56,7 @@ class _ExpensesState extends State<Expenses> {
       _registeredExpenses.remove(expense);
     });
 
-    // Interactive feedback with an "Undo" action -> demonstrates
-    // interactivity beyond the base tutorial's plain SnackBar.
+    // Interactive feedback with an "Undo" action.
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -64,8 +65,12 @@ class _ExpensesState extends State<Expenses> {
         action: SnackBarAction(
           label: 'Undo',
           onPressed: () {
+            if (!mounted) return;
             setState(() {
-              _registeredExpenses.insert(expenseIndex, expense);
+              _registeredExpenses.insert(
+                expenseIndex.clamp(0, _registeredExpenses.length),
+                expense,
+              );
             });
           },
         ),
@@ -75,24 +80,23 @@ class _ExpensesState extends State<Expenses> {
 
   @override
   Widget build(BuildContext context) {
-    Widget mainContent = const Center(
-      child: Text('No expenses found. Start adding some!'),
-    );
+    final width = MediaQuery.sizeOf(context).width;
 
-    if (_registeredExpenses.isNotEmpty) {
-      mainContent = ExpensesList(
-        expenses: _registeredExpenses,
-        onRemoveExpense: _removeExpense,
-      );
-    }
-
-    final width = MediaQuery.of(context).size.width;
+    final Widget mainContent = _registeredExpenses.isEmpty
+        ? const Center(
+            child: Text('No expenses found. Start adding some!'),
+          )
+        : ExpensesList(
+            expenses: _registeredExpenses,
+            onRemoveExpense: _removeExpense,
+          );
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Expense Tracker'),
         actions: [
           IconButton(
+            tooltip: 'Add expense',
             onPressed: _openAddExpenseOverlay,
             icon: const Icon(Icons.add),
           ),
@@ -105,9 +109,10 @@ class _ExpensesState extends State<Expenses> {
                 Expanded(child: mainContent),
               ],
             )
-          // Responsive layout: place the chart beside the list on wide
-          // screens instead of stacking it on top -> own enhancement.
+          // Responsive layout: chart beside the list on wide screens.
+          // crossAxisAlignment.start pins both to the top.
           : Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
                   child: Chart(expenses: _registeredExpenses),
