@@ -5,6 +5,9 @@ import 'package:uuid/uuid.dart';
 const uuid = Uuid();
 final formatter = DateFormat.yMd();
 
+// Peso formatter: gives "₱1,250.00" with thousands separators.
+final currencyFormatter = NumberFormat.currency(locale: 'en_PH', symbol: '₱');
+
 // Categories an expense can belong to.
 enum Category { food, travel, leisure, work, health }
 
@@ -29,11 +32,12 @@ const categoryLabels = {
 
 class Expense {
   Expense({
+    String? id,
     required this.title,
     required this.amount,
     required this.date,
     required this.category,
-  }) : id = uuid.v4();
+  }) : id = id ?? uuid.v4();
 
   final String id;
   final String title;
@@ -43,6 +47,10 @@ class Expense {
 
   String get formattedDate {
     return formatter.format(date);
+  }
+
+  String get formattedAmount {
+    return currencyFormatter.format(amount);
   }
 }
 
@@ -64,10 +72,6 @@ class ExpenseBucket {
   final List<Expense> expenses;
 
   double get totalExpenses {
-    double sum = 0;
-    for (final expense in expenses) {
-      sum += expense.amount;
-    }
-    return sum;
+    return expenses.fold(0.0, (sum, expense) => sum + expense.amount);
   }
 }

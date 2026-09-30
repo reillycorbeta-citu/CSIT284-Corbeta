@@ -56,7 +56,6 @@ class _ExpensesState extends State<Expenses> {
       _registeredExpenses.remove(expense);
     });
 
-    // Interactive feedback with an "Undo" action.
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -109,14 +108,10 @@ class _ExpensesState extends State<Expenses> {
                 Expanded(child: mainContent),
               ],
             )
-          // Responsive layout: chart beside the list on wide screens.
-          // crossAxisAlignment.start pins both to the top.
           : Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: Chart(expenses: _registeredExpenses),
-                ),
+                Expanded(child: Chart(expenses: _registeredExpenses)),
                 Expanded(child: mainContent),
               ],
             ),

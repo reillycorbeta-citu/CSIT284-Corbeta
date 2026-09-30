@@ -8,6 +8,8 @@ class ExpenseItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     // Redesigned card compared to the base tutorial: a leading circular
     // icon avatar and a cleaner two-line layout.
     return Card(
@@ -22,11 +24,10 @@ class ExpenseItem extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 22,
-              backgroundColor:
-                  Theme.of(context).colorScheme.primaryContainer,
+              backgroundColor: theme.colorScheme.primaryContainer,
               child: Icon(
                 categoryIcons[expense.category],
-                color: Theme.of(context).colorScheme.onPrimaryContainer,
+                color: theme.colorScheme.onPrimaryContainer,
               ),
             ),
             const SizedBox(width: 14),
@@ -36,32 +37,26 @@ class ExpenseItem extends StatelessWidget {
                 children: [
                   Text(
                     expense.title,
-                    style: Theme.of(context).textTheme.titleMedium,
+                    style: theme.textTheme.titleMedium,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Text(
-                        categoryLabels[expense.category]!,
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                      const Text(' · '),
-                      Text(
-                        expense.formattedDate,
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ],
+                  Text(
+                    '${categoryLabels[expense.category]!} · ${expense.formattedDate}',
+                    style: theme.textTheme.bodySmall,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
             ),
+            const SizedBox(width: 8),
             Text(
-              '₱${expense.amount.toStringAsFixed(2)}',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              expense.formattedAmount,
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),
