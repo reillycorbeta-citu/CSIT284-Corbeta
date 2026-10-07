@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class DemoButtons extends StatelessWidget {
+class DemoButtons extends StatefulWidget {
   const DemoButtons({super.key});
 
   @override
@@ -14,6 +14,7 @@ class _DemoButtonsState extends State<DemoButtons> {
 
   @override
   Widget build(BuildContext context) {
+    print('DemoButtons BUILD called');
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
