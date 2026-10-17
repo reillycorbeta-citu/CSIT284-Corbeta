@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:meals/screens/meal_details.dart';
 import 'package:meals/data/dummy_data.dart';
 import 'package:meals/models/category.dart';
 import 'package:meals/screens/meals.dart';
@@ -59,14 +59,13 @@ class CategoriesScreen extends StatelessWidget {
         icon: const Icon(Icons.casino),
         label: const Text('Surprise me'),
         onPressed: () {
-          final random = (List.of(dummyMeals)..shuffle()).first;
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (ctx) =>
-                  MealsScreen(title: 'Surprise!', meals: [random]),
-            ),
-          );
-        },
+  final random = (List.of(dummyMeals)..shuffle()).first;
+  Navigator.of(context).push(
+    MaterialPageRoute(
+      builder: (ctx) => MealDetailsScreen(meal: random),
+    ),
+  );
+},
       ),
       body: GridView(
         padding: const EdgeInsets.all(24),
