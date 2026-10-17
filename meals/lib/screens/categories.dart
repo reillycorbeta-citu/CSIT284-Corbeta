@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:meals/data/dummy_data.dart';
 import 'package:meals/models/category.dart';
 import 'package:meals/screens/meals.dart';
+import 'package:meals/utils/app_routes.dart';
 import 'package:meals/widgets/category_grid_item.dart';
 
 class CategoriesScreen extends StatelessWidget {
@@ -28,6 +29,44 @@ class CategoriesScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Pick your category'),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            const DrawerHeader(
+              child: Text('Meal Picker Plus', style: TextStyle(fontSize: 24)),
+            ),
+            ListTile(
+              leading: const Icon(Icons.bar_chart),
+              title: const Text('Meal Stats'),
+              onTap: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pushNamed(AppRoutes.stats);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.info_outline),
+              title: const Text('About'),
+              onTap: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pushNamed(AppRoutes.about);
+              },
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        icon: const Icon(Icons.casino),
+        label: const Text('Surprise me'),
+        onPressed: () {
+          final random = (List.of(dummyMeals)..shuffle()).first;
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (ctx) =>
+                  MealsScreen(title: 'Surprise!', meals: [random]),
+            ),
+          );
+        },
       ),
       body: GridView(
         padding: const EdgeInsets.all(24),
