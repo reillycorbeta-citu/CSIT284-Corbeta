@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:meals/data/dummy_data.dart';
 import 'package:meals/models/meal.dart';
 import 'package:meals/screens/categories.dart';
+import 'package:meals/screens/filters.dart';
 import 'package:meals/screens/meal_details.dart';
 import 'package:meals/screens/meals.dart';
 import 'package:meals/utils/app_routes.dart';
@@ -17,6 +18,30 @@ class TabsScreen extends StatefulWidget {
 class _TabsScreenState extends State<TabsScreen> {
   int _selectedPageIndex = 0;
   final List<Meal> _favoriteMeals = [];
+  Map<Filter, bool> _selectedFilters = {
+    Filter.glutenFree: false,
+    Filter.lactoseFree: false,
+    Filter.vegetarian: false,
+    Filter.vegan: false,
+  };
+
+  List<Meal> get _availableMeals {
+    return dummyMeals.where((meal) {
+      if (_selectedFilters[Filter.glutenFree]! && !meal.isGlutenFree) {
+        return false;
+      }
+      if (_selectedFilters[Filter.lactoseFree]! && !meal.isLactoseFree) {
+        return false;
+      }
+      if (_selectedFilters[Filter.vegetarian]! && !meal.isVegetarian) {
+        return false;
+      }
+      if (_selectedFilters[Filter.vegan]! && !meal.isVegan) {
+        return false;
+      }
+      return true;
+    }).toList();
+  }
 
   void _selectPage(int index) {
     setState(() {
@@ -45,8 +70,32 @@ class _TabsScreenState extends State<TabsScreen> {
     );
   }
 
+  Future<void> _openFilters() async {
+    Navigator.of(context).pop();
+    final result = await Navigator.of(context).push<Map<Filter, bool>>(
+      MaterialPageRoute(
+        builder: (ctx) => FiltersScreen(currentFilters: _selectedFilters),
+      ),
+    );
+
+    if (result != null) {
+      setState(() {
+        _selectedFilters = result;
+      });
+    }
+  }
+
   Future<void> _surpriseMe() async {
-    final random = (List.of(dummyMeals)..shuffle()).first;
+    final meals = _availableMeals;
+    if (meals.isEmpty) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No meals match your filters.')),
+      );
+      return;
+    }
+
+    final random = (List.of(meals)..shuffle()).first;
     final result = await Navigator.of(context).push<bool>(
       MaterialPageRoute(
         builder: (ctx) => MealDetailsScreen(
@@ -64,6 +113,7 @@ class _TabsScreenState extends State<TabsScreen> {
   @override
   Widget build(BuildContext context) {
     Widget activePage = CategoriesScreen(
+      availableMeals: _availableMeals,
       favorites: _favoriteMeals,
       onFavoriteChanged: _setFavorite,
     );
@@ -85,6 +135,11 @@ class _TabsScreenState extends State<TabsScreen> {
           children: [
             const DrawerHeader(
               child: Text('Meal Picker Plus', style: TextStyle(fontSize: 24)),
+            ),
+            ListTile(
+              leading: const Icon(Icons.tune),
+              title: const Text('Filters'),
+              onTap: _openFilters,
             ),
             ListTile(
               leading: const Icon(Icons.bar_chart),
