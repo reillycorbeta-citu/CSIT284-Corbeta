@@ -1,17 +1,17 @@
-# meals
+# Meal Picker Plus
 
-A new Flutter project.
+A Flutter meals app built for CSIT284 (Topic 8: Navigation).
 
-## Getting Started
+## Features
+- Category grid and meals list with image cards
+- Meal details screen with favorites (data returned via Navigator.pop)
+- Bottom tab navigation (Categories / Favorites)
+- Drawer menu with named routes (Stats, About)
+- Filters screen that returns settings to the tabs screen
+- "Surprise me" random meal button
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Run the app
+```
+flutter pub get
+flutter run
+```
