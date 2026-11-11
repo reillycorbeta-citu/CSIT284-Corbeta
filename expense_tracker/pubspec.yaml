@@ -1,0 +1,29 @@
+name: expense_tracker
+description: "A personal expense tracker built for Lesson 5 (Interactivity & Theming)."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.6
+
+  # Package used to generate unique ids for each expense
+  uuid: ^4.3.3
+
+  # Package used to format dates in a human-friendly way
+  intl: ^0.19.0
+
+  # Custom font package -> personal customization beyond the tutorial
+  google_fonts: ^6.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
